@@ -1,0 +1,258 @@
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.16), transparent 32rem),
+    radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.14), transparent 28rem),
+    #f8fafc;
+  color: #0f172a;
+}
+
+.nav-shell {
+  animation: navDrop 700ms cubic-bezier(0.2, 0.85, 0.25, 1.1) both;
+}
+
+.logo-mark {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.logo-mark::after {
+  position: absolute;
+  inset: -40% auto -40% -80%;
+  z-index: -1;
+  width: 60%;
+  content: "";
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  animation: logoSheen 3.6s ease-in-out infinite;
+}
+
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::after {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.45rem;
+  left: 1rem;
+  height: 2px;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981, #f59e0b);
+  transition: transform 260ms ease;
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.icon-action {
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-action::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  transform: translateY(100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(245, 158, 11, 0.35));
+  transition: transform 320ms ease;
+}
+
+.icon-action:hover::before {
+  transform: translateY(0);
+}
+
+.icon-action svg,
+.icon-action span {
+  position: relative;
+}
+
+.cart-action > span {
+  animation: cartBadge 2.4s ease-in-out infinite;
+}
+
+.hamburger {
+  display: grid;
+  width: 1.25rem;
+  gap: 0.25rem;
+}
+
+.hamburger span {
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: center;
+  transition:
+    transform 280ms ease,
+    opacity 180ms ease;
+}
+
+.hamburger.is-open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger.is-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.is-open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(15, 23, 42, 0.18);
+  transition: opacity 260ms ease;
+}
+
+.mobile-backdrop.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.mobile-menu {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-1rem) scale(0.98);
+  transform-origin: top;
+  transition:
+    max-height 460ms cubic-bezier(0.2, 0.85, 0.25, 1),
+    opacity 220ms ease,
+    transform 360ms cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.mobile-menu.is-visible {
+  max-height: 26rem;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.mobile-link {
+  transform: translateY(0.5rem);
+  opacity: 0;
+  transition:
+    transform 360ms ease,
+    opacity 300ms ease,
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.mobile-menu.is-visible .mobile-link {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mobile-menu.is-visible .mobile-link:nth-child(1) {
+  transition-delay: 70ms;
+}
+
+.mobile-menu.is-visible .mobile-link:nth-child(2) {
+  transition-delay: 120ms;
+}
+
+.mobile-menu.is-visible .mobile-link:nth-child(3) {
+  transition-delay: 170ms;
+}
+
+.mobile-cart-button,
+.mobile-account-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.mobile-cart-button {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.32), transparent 28%),
+    linear-gradient(135deg, #0f172a 0%, #1e293b 42%, #059669 100%);
+}
+
+.mobile-account-button {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.38), transparent 30%),
+    linear-gradient(135deg, #10b981 0%, #14b8a6 46%, #f59e0b 120%);
+}
+
+.mobile-cart-button::before,
+.mobile-account-button::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  opacity: 0.5;
+  background-image:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 10px),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-35%);
+  transition:
+    opacity 300ms ease,
+    transform 460ms ease;
+}
+
+.mobile-cart-button:hover::before,
+.mobile-account-button:hover::before,
+.mobile-cart-button:focus-visible::before,
+.mobile-account-button:focus-visible::before {
+  opacity: 0.85;
+  transform: translateX(20%);
+}
+
+@keyframes navDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-1.25rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes logoSheen {
+  0%,
+  52% {
+    left: -80%;
+  }
+
+  72%,
+  100% {
+    left: 130%;
+  }
+}
+
+@keyframes cartBadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
