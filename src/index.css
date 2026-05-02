@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+*,
+::before,
+::after {
+    box-sizing: inherit;
+}
+
+html {
+    /* font-size: 62.5%; */
+    box-sizing: border-box;
+    /* scroll-behavior: smooth; */
+}
+
+/* html, body {
+    overflow-y: hidden !important;
+    overflow: hidden;
+    touch-action: none;
+} */
+
+.scrollBlock {
+    overflow-y: hidden !important;
+    overflow: hidden;
+    touch-action: none;
+}
+
+a {
+    text-decoration: none;
+    display: flex;
+}
+
+ul {
+    list-style: none;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.zero-w {
+    width: 0;
+}
+
+.displayOff {
+    display: none !important;
+}
+
+html {
+    scroll-behavior: smooth;
+    
+}
