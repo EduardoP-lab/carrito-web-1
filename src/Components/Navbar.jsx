@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Lista centralizada de enlaces principales para reutilizarlos en desktop y mobile.
 const navLinks = [
@@ -54,6 +54,90 @@ function UserIcon({ className = 'size-5' }) {
   )
 }
 
+// Icono para la opcion "Mi cuenta" del dropdown desktop.
+function ProfileIcon({ className = 'size-5' }) {
+  return (
+    <svg
+      // Es decorativo porque el texto de la opcion comunica la accion.
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      {/* Representa una credencial de usuario. */}
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6.75 4.75h10.5a2 2 0 0 1 2 2v10.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2Z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.25 10a2.75 2.75 0 1 0 5.5 0 2.75 2.75 0 0 0-5.5 0ZM8.25 16.6a4.4 4.4 0 0 1 7.5 0" />
+    </svg>
+  )
+}
+
+// Icono para la opcion "Configuracion" del dropdown.
+function SettingsIcon({ className = 'size-5' }) {
+  return (
+    <svg
+      // El color se hereda del contenedor para responder al hover.
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      {/* Dibuja un engrane simple para ajustes. */}
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.4 4.9 11.05 3h1.9l.65 1.9 1.55.64 1.8-.88 1.34 1.34-.88 1.8.64 1.55 1.95.65v1.9l-1.95.65-.64 1.55.88 1.8-1.34 1.34-1.8-.88-1.55.64-.65 1.9h-1.9l-.65-1.9-1.55-.64-1.8.88-1.34-1.34.88-1.8-.64-1.55L4 11.9V10l1.95-.65.64-1.55-.88-1.8 1.34-1.34 1.8.88 1.55-.64Z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.25 10.95a2.75 2.75 0 1 0 5.5 0 2.75 2.75 0 0 0-5.5 0Z" />
+    </svg>
+  )
+}
+
+// Icono de sol para indicar el modo claro del tema.
+function SunIcon({ className = 'size-5' }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      {/* Circulo central y rayos del sol. */}
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.75a4.25 4.25 0 1 0 0 8.5 4.25 4.25 0 0 0 0-8.5ZM12 3.75v1.5M12 18.75v1.5M20.25 12h-1.5M5.25 12h-1.5M17.83 6.17l-1.06 1.06M7.23 16.77l-1.06 1.06M17.83 17.83l-1.06-1.06M7.23 7.23 6.17 6.17" />
+    </svg>
+  )
+}
+
+// Icono de luna para indicar el modo oscuro del tema.
+function MoonIcon({ className = 'size-5' }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      {/* Media luna construida con una sola ruta. */}
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.25 15.95A7.5 7.5 0 0 1 8.05 4.75a7.5 7.5 0 1 0 11.2 11.2Z"
+      />
+    </svg>
+  )
+}
+
 // Icono hamburguesa del menu mobile. La clase is-open activa la animacion en App.css.
 function MenuIcon({ open }) {
   return (
@@ -69,13 +153,49 @@ function MenuIcon({ open }) {
 function Navbar() {
   // Controla si el menu responsive esta abierto o cerrado.
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  // Controla si el menu desplegable del usuario en desktop esta abierto.
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
+  // Guarda el tema elegido desde el dropdown. false = claro, true = oscuro.
+  const [isDarkTheme, setIsDarkTheme] = useState(false)
+  // Referencia al contenedor del dropdown para detectar clicks fuera.
+  const accountMenuRef = useRef(null)
 
   // Cierra el menu mobile al navegar o al hacer click en el backdrop.
   const closeMenu = () => setIsMenuOpen(false)
+  // Cierra el dropdown de usuario cuando se elige una opcion normal.
+  const closeAccountMenu = () => setIsAccountMenuOpen(false)
+
+  // Aplica una clase global al html para que el CSS pueda cambiar colores por tema.
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-dark', isDarkTheme)
+  }, [isDarkTheme])
+
+  // Cierra el dropdown al hacer click fuera o al presionar Escape.
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!accountMenuRef.current?.contains(event.target)) {
+        setIsAccountMenuOpen(false)
+      }
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsAccountMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   return (
-    // Header fijo para que la navbar permanezca visible al hacer scroll.
-    <header className="fixed inset-x-0 top-0 z-50 px-4 py-4 sm:px-6 lg:px-8">
+    // Header sticky para que la navbar acompane el scroll sin salirse del flujo del hero.
+    <header className="sticky top-0 z-50 px-4 py-4 sm:px-6 lg:px-8 relative">
       {/* Barra principal con efecto glass, sombra y animacion nav-shell definida en CSS. */}
       <nav className="nav-shell mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/70 bg-white/80 px-4 py-3 shadow-[0_20px_60px_rgba(15,23,42,0.10)] backdrop-blur-xl sm:px-6">
         {/* Bloque de marca: logo + nombre de la tienda. */}
@@ -125,14 +245,90 @@ function Navbar() {
             </span>
           </a>
 
-          {/* Acceso a la cuenta del usuario en desktop. */}
-          <a
-            className="icon-action flex justify-center items-center size-11  rounded-full border border-slate-200 bg-white text-slate-900 transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            href="#cuenta"
-            aria-label="Abrir mi cuenta"
-          >
-            <UserIcon />
-          </a>
+          {/* Contenedor relativo para posicionar el dropdown debajo del icono de usuario. */}
+          <div className="relative" ref={accountMenuRef}>
+            {/* Boton de usuario desktop. Abre y cierra el menu desplegable animado. */}
+            <button
+              className="icon-action flex justify-center items-center size-11 rounded-full border border-slate-200 bg-white text-slate-900 transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={isAccountMenuOpen}
+              aria-controls="account-dropdown"
+              aria-label={isAccountMenuOpen ? 'Cerrar menu de usuario' : 'Abrir menu de usuario'}
+              onClick={() => setIsAccountMenuOpen((open) => !open)}
+            >
+              <UserIcon />
+            </button>
+
+            {/* Menu desktop de usuario. La clase is-visible dispara la animacion en App.css. */}
+            <div
+              id="account-dropdown"
+              className={`account-dropdown absolute right-0 top-[calc(100%+0.75rem)] w-72 rounded-[1.5rem] border border-white/70 bg-white/95 p-2 shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl ${
+                isAccountMenuOpen ? 'is-visible' : ''
+              }`}
+              role="menu"
+            >
+              {/* Pequeno encabezado para dar contexto visual al menu. */}
+              <div className="account-dropdown-header rounded-[1.15rem] px-4 py-3">
+                <p className="text-xs font-black uppercase tracking-normal text-emerald-600">Usuario</p>
+                <p className="mt-1 text-sm font-black text-slate-950">Gestiona tu experiencia</p>
+              </div>
+
+              {/* Opcion para entrar a la pagina de cuenta. */}
+              <a
+                className="account-menu-item"
+                href="#cuenta"
+                role="menuitem"
+                onClick={closeAccountMenu}
+              >
+                <span className="account-menu-icon bg-emerald-100 text-emerald-700">
+                  <ProfileIcon />
+                </span>
+                <span>
+                  <span className="block text-sm font-black">Mi cuenta</span>
+                  <span className="block text-xs font-semibold text-slate-500">Perfil y pedidos</span>
+                </span>
+              </a>
+
+              {/* Opcion para ir a configuracion de usuario. */}
+              <a
+                className="account-menu-item"
+                href="#configuracion"
+                role="menuitem"
+                onClick={closeAccountMenu}
+              >
+                <span className="account-menu-icon bg-amber-100 text-amber-700">
+                  <SettingsIcon />
+                </span>
+                <span>
+                  <span className="block text-sm font-black">Configuracion</span>
+                  <span className="block text-xs font-semibold text-slate-500">Preferencias y seguridad</span>
+                </span>
+              </a>
+
+              {/* Opcion de tema. Mantiene abierto el menu para que se vea el cambio de estado. */}
+              <button
+                className="account-menu-item w-full"
+                type="button"
+                role="menuitem"
+                onClick={() => setIsDarkTheme((dark) => !dark)}
+              >
+                <span className="account-menu-icon bg-slate-900 text-white">
+                  {isDarkTheme ? <MoonIcon /> : <SunIcon />}
+                </span>
+                <span className="min-w-0 flex-1 text-left">
+                  <span className="block text-sm font-black">Tema</span>
+                  <span className="block text-xs font-semibold text-slate-500">
+                    {isDarkTheme ? 'Oscuro' : 'Claro'}
+                  </span>
+                </span>
+                {/* Switch visual que refleja si el tema oscuro esta activo. */}
+                <span className={`theme-switch ${isDarkTheme ? 'is-dark' : ''}`} aria-hidden="true">
+                  <span />
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Boton del menu mobile. aria-expanded comunica el estado a lectores de pantalla. */}
@@ -158,7 +354,7 @@ function Navbar() {
       {/* Panel de navegacion mobile. is-visible activa apertura, opacidad y desplazamiento en CSS. */}
       <div
         id="mobile-navigation"
-        className={`mobile-menu mx-4 mt-3 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl md:hidden ${
+        className={`mobile-menu absolute left-0 right-0 top-full z-50 mx-4 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl md:hidden ${
           isMenuOpen ? 'is-visible' : ''
         }`}
       >
