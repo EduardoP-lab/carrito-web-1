@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { A11y, EffectCoverflow, Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { useCart } from '../Context/CartContext'
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/navigation'
@@ -9,86 +10,105 @@ import 'swiper/css/pagination'
 // Lista de productos destacados que alimenta el carrusel de SwiperJS.
 const featuredProducts = [
   {
+    id: 'aeropods-max',
     name: 'AeroPods Max',
     category: 'Audio',
-    price: '$129.00',
+    price: 129,
     tag: 'Nuevo',
     accent: 'cyan',
     detail: 'ANC + modo ambiente',
   },
   {
+    id: 'nova-watch-s9',
     name: 'Nova Watch S9',
     category: 'Wearable',
-    price: '$189.00',
+    price: 189,
     tag: 'Top ventas',
     accent: 'emerald',
     detail: 'Bateria 7 dias',
   },
   {
+    id: 'pixeldock-3-en-1',
     name: 'PixelDock 3 en 1',
     category: 'Carga',
-    price: '$79.00',
+    price: 79,
     tag: 'MagSafe',
     accent: 'amber',
     detail: 'Carga rapida 45W',
   },
   {
+    id: 'pulse-speaker-mini',
     name: 'Pulse Speaker Mini',
     category: 'Bocinas',
-    price: '$99.00',
+    price: 99,
     tag: 'Bluetooth',
     accent: 'violet',
     detail: 'Sonido 360 grados',
   },
   {
+    id: 'keypro-wireless',
     name: 'KeyPro Wireless',
     category: 'Setup',
-    price: '$149.00',
+    price: 149,
     tag: 'RGB',
     accent: 'rose',
     detail: 'Switches silenciosos',
   },
   {
+    id: 'visioncam-4k',
     name: 'VisionCam 4K',
     category: 'Streaming',
-    price: '$119.00',
+    price: 119,
     tag: '4K',
     accent: 'sky',
     detail: 'Auto focus inteligente',
   },
   {
+    id: 'pocket-drone-air',
     name: 'Pocket Drone Air',
     category: 'Drones',
-    price: '$349.00',
+    price: 349,
     tag: 'Pro',
     accent: 'lime',
     detail: 'Video HDR estable',
   },
   {
+    id: 'grippad-ultra',
     name: 'GripPad Ultra',
     category: 'Gaming',
-    price: '$89.00',
+    price: 89,
     tag: 'Low latency',
     accent: 'orange',
     detail: 'Respuesta 8ms',
   },
   {
+    id: 'smarttag-duo',
     name: 'SmartTag Duo',
     category: 'Accesorios',
-    price: '$39.00',
+    price: 39,
     tag: 'Pack x2',
     accent: 'teal',
     detail: 'Ubicacion precisa',
   },
   {
+    id: 'hololamp-desk',
     name: 'HoloLamp Desk',
     category: 'Smart home',
-    price: '$159.00',
+    price: 159,
     tag: 'Ambiente',
     accent: 'indigo',
     detail: 'Escenas dinamicas',
   },
 ]
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
+function formatCurrency(value) {
+  return currencyFormatter.format(value)
+}
 
 // Icono de flecha reutilizado por los botones laterales.
 function SliderArrowIcon({ direction = 'next' }) {
@@ -124,6 +144,17 @@ function ProductVisual({ accent }) {
 function FeaturedProducts() {
   // Swiper usa realIndex para reportar el producto activo aunque el loop duplique slides internamente.
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [addedProductId, setAddedProductId] = useState(null)
+  const { addItem } = useCart()
+
+  const handleAddProduct = (product) => {
+    addItem(product)
+    setAddedProductId(product.id)
+
+    window.setTimeout(() => {
+      setAddedProductId((currentId) => (currentId === product.id ? null : currentId))
+    }, 1800)
+  }
 
   return (
     <section id="productos" className="featured-products-section relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
@@ -211,9 +242,18 @@ function FeaturedProducts() {
                     </div>
 
                     <div className="mt-6 flex items-center justify-between gap-4">
-                      <p className="text-3xl font-black text-slate-950">{product.price}</p>
-                      <button className="product-buy-button" type="button">
-                        Agregar +
+                      <p className="text-3xl font-black text-slate-950">{formatCurrency(product.price)}</p>
+                      {/*
+                        Estado visual temporal: cuando se agrega este producto,
+                        el boton cambia color y texto durante unos segundos.
+                      */}
+                      <button
+                        className={`product-buy-button ${addedProductId === product.id ? 'is-added' : ''}`}
+                        type="button"
+                        aria-label={`Agregar ${product.name} al carrito`}
+                        onClick={() => handleAddProduct(product)}
+                      >
+                        {addedProductId === product.id ? 'Agregado' : 'Agregar +'}
                       </button>
                     </div>
                   </div>

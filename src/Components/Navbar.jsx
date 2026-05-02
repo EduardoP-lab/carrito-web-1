@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useCart } from '../Context/CartContext'
 
 // Lista centralizada de enlaces principales para reutilizarlos en desktop y mobile.
 const navLinks = [
-  { label: 'Productos', href: '#productos' },
-  { label: 'Contacto', href: '#contacto' },
+  { label: 'Productos', href: '/#productos' },
+  { label: 'Contacto', href: '/#contacto' },
 ]
 
 // Icono SVG del carrito. Usa currentColor para heredar el color desde Tailwind.
@@ -151,6 +153,7 @@ function MenuIcon({ open }) {
 }
 
 function Navbar() {
+  const { cartItemCount } = useCart()
   // Controla si el menu responsive esta abierto o cerrado.
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // Controla si el menu desplegable del usuario en desktop esta abierto.
@@ -199,9 +202,9 @@ function Navbar() {
       {/* Barra principal con efecto glass, sombra y animacion nav-shell definida en CSS. */}
       <nav className="nav-shell mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/70 bg-white/80 px-4 py-3 shadow-[0_20px_60px_rgba(15,23,42,0.10)] backdrop-blur-xl sm:px-6">
         {/* Bloque de marca: logo + nombre de la tienda. */}
-        <a
+        <Link
           className="group flex items-center gap-3 text-slate-950"
-          href="#inicio"
+          to="/"
           aria-label="Ir al inicio de NovaMarket"
           onClick={closeMenu}
         >
@@ -216,7 +219,7 @@ function Navbar() {
               ecommerce
             </span>
           </span>
-        </a>
+        </Link>
 
         {/* Navegacion desktop. Se oculta en mobile y aparece desde md. */}
         <div className="hidden items-center gap-2 md:flex">
@@ -233,17 +236,17 @@ function Navbar() {
           ))}
 
           {/* Acceso al carrito en desktop con contador flotante. */}
-          <a
+          <Link
             className="icon-action w-[65px] flex items-center justify-center cart-action relative ml-2 size-11 rounded-full border border-slate-200 bg-white text-slate-950 transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-950 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            href="#carrito"
+            to="/carrito"
             aria-label="Abrir carrito"
           >
             <CartIcon />
             {/* Badge de cantidad de productos en el carrito. */}
             <span className="absolute -right-1 -top-1 flex items-center justify-center size-5 rounded-full bg-amber-400 text-[0.65rem] font-black text-slate-950">
-              0
+              {cartItemCount}
             </span>
-          </a>
+          </Link>
 
           {/* Contenedor relativo para posicionar el dropdown debajo del icono de usuario. */}
           <div className="relative" ref={accountMenuRef}>
@@ -375,14 +378,14 @@ function Navbar() {
           {/* Acciones principales del ecommerce en mobile: carrito y cuenta. */}
           <div className="grid grid-cols-2 gap-2">
             {/* Boton mobile del carrito. */}
-            <a
+            <Link
               className="mobile-link mobile-cart-button flex min-h-16 items-center justify-center gap-2 rounded-3xl px-4 py-4 text-sm font-black text-white shadow-lg shadow-slate-950/15 transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-              href="#carrito"
+              to="/carrito"
               onClick={closeMenu}
             >
               <CartIcon/>
-              <span>Carrito</span>
-            </a>
+              <span>Carrito ({cartItemCount})</span>
+            </Link>
             {/* Boton mobile de mi cuenta. */}
             <a
               className="mobile-link mobile-account-button flex min-h-16 items-center justify-center gap-2 rounded-3xl px-4 py-4 text-sm font-black text-white shadow-lg shadow-emerald-950/15 transition-transform duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-950"
